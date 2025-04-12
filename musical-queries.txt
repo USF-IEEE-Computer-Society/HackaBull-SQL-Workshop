@@ -1,0 +1,170 @@
+CREATE TABLE Musician (
+id PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    stage_name VARCHAR(50),  -- stage_name can be NULL
+    country VARCHAR(50),     -- country can be NULL
+    main_genre VARCHAR(50) NOT NULL,
+    active BOOLEAN NOT NULL   -- active cannot be NULL
+);
+
+
+CREATE TABLE Song (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    release_date DATE NOT NULL,
+    genre VARCHAR(50),
+    duration DOUBLE PRECISION,  -- Duration in seconds (e.g., 180.5)
+    musician_id INT NOT NULL,  -- Foreign key referencing Musician
+    FOREIGN KEY (musician_id) REFERENCES Musician(id)
+);
+
+
+-- INSERT statements
+INSERT INTO Musician (id, first_name, last_name, date_of_birth, stage_name, country, main_genre, active)
+VALUES (1, 'John', 'Lennon', '1940-10-09', NULL, 'United Kingdom', 'Rock', false);
+
+INSERT INTO Musician (id, first_name, last_name, date_of_birth, stage_name, country, main_genre, active)
+VALUES (2, 'Beyoncé', 'Knowles', '1981-09-04', 'Beyoncé', NULL, 'R&B', true);
+
+INSERT INTO Musician (id, first_name, last_name, date_of_birth, stage_name, country, main_genre, active)
+VALUES (3, 'Freddie', 'Mercury', '1946-09-05', NULL, 'United Kingdom', 'Rock', false);
+
+INSERT INTO Musician (id, first_name, last_name, date_of_birth, stage_name, country, main_genre, active)
+VALUES (4, 'Abel', 'Tesfaye', '1990-02-16', 'The Weeknd', 'Canada', 'R&B', true);
+
+INSERT INTO Musician (id, first_name, last_name, date_of_birth, stage_name, country, main_genre, active)
+VALUES (5, 'Billie', 'Eilish', '2001-12-18', NULL, NULL, 'Pop', true);
+
+-- UPDATE statements
+-- Update a stage name
+UPDATE Musician
+SET stage_name = 'Queen B'
+WHERE id = 2;
+
+-- Update multiple fields at once
+UPDATE Musician
+SET main_genre = 'Alternative', country = 'United States'
+WHERE id = 5;
+
+-- Update based on multiple conditions
+UPDATE Musician
+SET active = false
+WHERE country = 'United States' AND date_of_birth < '1990-01-01';
+
+-- Update all musicians from a specific country
+UPDATE Musician
+SET country = 'UK'
+WHERE country = 'United Kingdom';
+
+-- Update NULL countries to a default value
+UPDATE Musician
+SET country = 'Unknown'
+WHERE country IS NULL;
+
+-- Update a musician's genre and mark as inactive
+UPDATE Musician
+SET main_genre = 'Classic Rock', active = false
+WHERE id = 3;
+
+-- DELETE statements
+-- Delete a specific musician by ID
+DELETE FROM Musician
+WHERE id = 1;
+
+-- Delete inactive musicians
+DELETE FROM Musician
+WHERE active = false;
+
+-- Delete musicians from a specific country
+DELETE FROM Musician
+WHERE country = 'Canada';
+
+-- Delete musicians with no stage name
+DELETE FROM Musician
+WHERE stage_name IS NULL;
+
+-- Delete musicians with both stage_name and country as NULL
+DELETE FROM Musician
+WHERE stage_name IS NULL AND country IS NULL;
+
+-- Delete musicians born before a certain date
+DELETE FROM Musician
+WHERE date_of_birth < '1950-01-01';
+
+-- John Lennon (id=1)
+INSERT INTO Song (id, title, release_date, genre, duration, musician_id)
+VALUES (1, 'Imagine', '1971-10-11', 'Rock', 183.0, 1);
+
+-- Beyoncé (id=2)
+INSERT INTO Song (id, title, release_date, genre, duration, musician_id)
+VALUES (2, 'Halo', '2008-01-20', 'R&B', 261.5, 2);
+
+-- Freddie Mercury (id=3)
+INSERT INTO Song (id, title, release_date, genre, duration, musician_id)
+VALUES (3, 'Bohemian Rhapsody', '1975-10-31', 'Rock', 354.0, 3);
+
+-- The Weeknd (id=4)
+INSERT INTO Song (id, title, release_date, genre, duration, musician_id)
+VALUES (4, 'Blinding Lights', '2019-11-29', NULL, 200.8, 4);
+
+-- Billie Eilish (id=5)
+INSERT INTO Song (id, title, release_date, genre, duration, musician_id)
+VALUES (5, 'Bad Guy', '2019-03-29', 'Pop', NULL, 5);
+
+-- UPDATE statements
+-- Update a song title
+UPDATE Song
+SET title = 'Bohemian Rhapsody (Remastered)'
+WHERE id = 3;
+
+-- Update multiple fields at once
+UPDATE Song
+SET genre = 'Alternative Pop', duration = 194.5
+WHERE id = 5;
+
+-- Update based on musician relationship (John Lennon)
+UPDATE Song
+SET genre = 'Classic Rock'
+WHERE musician_id = 1;
+
+-- Update all songs of a particular genre
+UPDATE Song
+SET duration = duration * 1.02  -- Add 2% to duration for all Rock songs
+WHERE genre = 'Rock';
+
+-- Update songs with NULL genre
+UPDATE Song
+SET genre = 'Unknown'
+WHERE genre IS NULL;
+
+-- Update songs released before a certain date
+UPDATE Song
+SET title = CONCAT(title, ' (Classic)')
+WHERE release_date < '1980-01-01';
+
+-- DELETE statements
+-- Delete a specific song by ID
+DELETE FROM Song
+WHERE id = 1;
+
+-- Delete songs by a particular musician (The Weeknd)
+DELETE FROM Song
+WHERE musician_id = 4;
+
+-- Delete songs with NULL duration
+DELETE FROM Song
+WHERE duration IS NULL;
+
+-- Delete songs in a specific genre
+DELETE FROM Song
+WHERE genre = 'Pop';
+
+-- Delete classic songs (this would remove songs by John Lennon and Freddie Mercury)
+DELETE FROM Song
+WHERE release_date < '2000-01-01';
+
+-- Delete songs with a duration shorter than a certain value
+DELETE FROM Song
+WHERE duration < 180.0;  -- Delete songs shorter than 3 minutes
